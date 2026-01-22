@@ -10,10 +10,14 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authService } from "@/services/authService";
+import { useState } from "react";
+import { useToast } from "@/hooks/useToast";
 
 const formSchema = yup.object({
   name: yup.string().required("Nome é obrigatório."),
+  storeName: yup.string().required("Nome do estabelecimento é obrigatório."),
   email: yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
   password: yup
     .string()
@@ -26,17 +30,41 @@ const formSchema = yup.object({
 });
 
 export const Register = () => {
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm({
     resolver: yupResolver(formSchema),
     values: {
       name: "",
+      storeName: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
   });
 
-  const handleSubmit = form.handleSubmit(async () => {});
+  const handleSubmit = form.handleSubmit(async (data) => {
+    setIsLoading(true);
+
+    const result = await authService.register({
+      name: data.name,
+      storeName: data.storeName,
+      email: data.email,
+      password: data.password,
+    });
+
+    if (result.error) {
+      toast.addToast(result.error, "error");
+      setIsLoading(false);
+      return;
+    }
+
+    toast.addToast("Cadastro realizado com sucesso!", "success");
+    setIsLoading(false);
+    navigate("/admin");
+  });
 
   return (
     <div className="w-full h-full flex items-center justify-center">
@@ -56,6 +84,11 @@ export const Register = () => {
                 placeholder="Digite seu nome"
               />
               <Input
+                name="storeName"
+                label="Nome do estabelecimento"
+                placeholder="Digite o nome do seu estabelecimento"
+              />
+              <Input
                 name="email"
                 label="E-mail"
                 placeholder="Digite seu e-mail"
@@ -73,7 +106,9 @@ export const Register = () => {
                 type="password"
               />
 
-              <Button>Criar minha conta</Button>
+              <Button disabled={isLoading}>
+                {isLoading ? "Carregando..." : "Criar minha conta"}
+              </Button>
               <div className="flex items-center gap-2">
                 <div className="w-full h-0.5 bg-zinc-200" />
                 <span className="text-[10px] font-semibold text-zinc-400">

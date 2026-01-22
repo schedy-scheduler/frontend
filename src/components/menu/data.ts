@@ -1,4 +1,4 @@
-import { ChartLine, Home, Store, User, Users, Wrench } from "lucide-react";
+import { ChartLine, Calendar, Store, User, Users, Wrench } from "lucide-react";
 
 export const menu = [
   {
@@ -7,7 +7,7 @@ export const menu = [
       {
         label: "Agendamentos",
         path: "/admin",
-        icon: Home,
+        icon: Calendar,
       },
       {
         label: "Clientes",

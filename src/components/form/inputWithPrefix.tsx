@@ -3,11 +3,13 @@ import { Label } from "../ui/label";
 import { Input as InputComponent } from "../ui/input";
 import React from "react";
 
-interface IInputWithPrefixProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface IInputWithPrefixProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "prefix"
+> {
   name?: string;
   label?: string;
-  prefix?: React.ReactNode;
+  prefix?: string;
 }
 
 export const InputWithPrefix: React.FC<IInputWithPrefixProps> = ({

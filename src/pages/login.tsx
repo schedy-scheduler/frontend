@@ -10,7 +10,10 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { authService } from "@/services/authService";
+import { useState } from "react";
+import { useToast } from "@/hooks/useToast";
 
 const formSchema = yup.object({
   email: yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
@@ -21,6 +24,10 @@ const formSchema = yup.object({
 });
 
 export const Login = () => {
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm({
     resolver: yupResolver(formSchema),
     values: {
@@ -29,7 +36,24 @@ export const Login = () => {
     },
   });
 
-  const handleSubmit = form.handleSubmit(async () => {});
+  const handleSubmit = form.handleSubmit(async (data) => {
+    setIsLoading(true);
+
+    const result = await authService.login({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (result.error) {
+      toast.addToast(result.error, "error");
+      setIsLoading(false);
+      return;
+    }
+
+    toast.addToast("Login realizado com sucesso!", "success");
+    setIsLoading(false);
+    navigate("/admin");
+  });
 
   return (
     <div className="w-full h-full flex items-center justify-center">
@@ -55,7 +79,9 @@ export const Login = () => {
                 type="password"
               />
 
-              <Button>Fazer login</Button>
+              <Button disabled={isLoading}>
+                {isLoading ? "Carregando..." : "Fazer login"}
+              </Button>
               <div className="flex items-center gap-2">
                 <div className="w-full h-0.5 bg-zinc-200" />
                 <span className="text-[10px] font-semibold text-zinc-400">

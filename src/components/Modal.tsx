@@ -18,6 +18,8 @@ interface IModalProps {
   cancelButtonText?: string;
   confirmButtonText?: string;
   onConfirmButtonClick?: () => void;
+  deleteButtonText?: string;
+  onDeleteButtonClick?: () => void;
   children: ReactNode;
 }
 
@@ -29,6 +31,8 @@ export const Modal: React.FC<IModalProps> = ({
   cancelButtonText = "Cancelar",
   confirmButtonText,
   onConfirmButtonClick,
+  deleteButtonText,
+  onDeleteButtonClick,
   children,
 }) => {
   return (
@@ -43,13 +47,24 @@ export const Modal: React.FC<IModalProps> = ({
           )}
         </DialogHeader>
         {children}
-        <DialogFooter>
-          <DialogClose>
-            <Button variant="outline">{cancelButtonText}</Button>
-          </DialogClose>
-          {confirmButtonText && (
-            <Button onClick={onConfirmButtonClick}>{confirmButtonText}</Button>
-          )}
+        <DialogFooter className="flex justify-between">
+          <div>
+            {deleteButtonText && (
+              <Button variant="destructive" onClick={onDeleteButtonClick}>
+                {deleteButtonText}
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <DialogClose asChild>
+              <Button variant="outline">{cancelButtonText}</Button>
+            </DialogClose>
+            {confirmButtonText && (
+              <Button onClick={onConfirmButtonClick}>
+                {confirmButtonText}
+              </Button>
+            )}
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

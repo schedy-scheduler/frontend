@@ -12,10 +12,19 @@ import {
   SidebarMenuItem,
 } from "../ui/sidebar";
 import { menu } from "./data";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { authService } from "@/services/authService";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Menu: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleLogout = async () => {
+    await authService.logout();
+    navigate("/");
+  };
 
   return (
     <Sidebar>
@@ -24,14 +33,16 @@ export const Menu: React.FC = () => {
           <Store size={18} color="white" />
         </div>
         <div className="flex flex-col">
-          <strong className="text-xs">Stetes Store</strong>
+          <strong className="text-xs">
+            {user?.store?.name || "Meu Estabelecimento"}
+          </strong>
           <span className="text-[10px] text-zinc-500">Plano grátis</span>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         {menu.map((item) => (
-          <SidebarGroup>
+          <SidebarGroup key={item.label}>
             <SidebarGroupLabel className="text-zinc-400">
               {item?.label}
             </SidebarGroupLabel>
@@ -65,13 +76,16 @@ export const Menu: React.FC = () => {
           <User size={18} color="white" />
         </div>
         <div className="flex flex-col">
-          <strong className="text-xs">Guilherme Stetes</strong>
-          <span className="text-[10px] text-zinc-500">gstetes@gmail.com</span>
+          <strong className="text-xs">{user?.name || "Usuário"}</strong>
+          <span className="text-[10px] text-zinc-500">{user?.email}</span>
         </div>
 
-        <Link to="/" className="ml-auto">
+        <button
+          onClick={handleLogout}
+          className="ml-auto hover:bg-zinc-100 p-2 rounded transition"
+        >
           <LogOut size={16} className="text-zinc-500" />
-        </Link>
+        </button>
       </SidebarFooter>
     </Sidebar>
   );

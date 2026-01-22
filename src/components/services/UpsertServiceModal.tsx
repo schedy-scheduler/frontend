@@ -57,6 +57,7 @@ export const UpsertServiceModal: React.FC<IUpsertServiceModalProps> = ({
             name="duration"
             label="Duração"
             placeholder="Duração do serviço"
+            type="time"
           />
         </div>
       </Modal>

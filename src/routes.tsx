@@ -10,6 +10,7 @@ import {
 } from "./pages";
 import { AuthLayout } from "./layout/auth";
 import { Reports } from "./pages/admin/reports";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export const Routes: React.FC = () => {
   return (
@@ -17,7 +18,14 @@ export const Routes: React.FC = () => {
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      <Route path="/admin" element={<AuthLayout />}>
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AuthLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Home />} />
         <Route path="reports" element={<Reports />} />
         <Route path="customers" element={<Customers />} />
