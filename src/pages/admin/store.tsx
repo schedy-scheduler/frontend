@@ -1,6 +1,7 @@
 import { Input, InputWithPrefix } from "@/components/form";
 import { PageHeader } from "@/components/PageHeader";
 import { StoreHourItem } from "@/components/store/StoreHourItem";
+import { StoreImageUpload } from "@/components/store/StoreImageUpload";
 import { Button } from "@/components/ui/button";
 import { STORE_WEEK_DAYS } from "@/constants/store";
 import { FormProvider, useForm } from "react-hook-form";
@@ -15,6 +16,7 @@ interface StoreFormData {
   email: string;
   phone: string;
   slug: string;
+  image_url?: string;
   hours: Record<string, { active: boolean; start: string; end: string }>;
 }
 
@@ -30,6 +32,7 @@ export const Store: React.FC = () => {
       email: "",
       phone: "",
       slug: "",
+      image_url: "",
       hours: {
         sunday: { active: false, start: "00:00", end: "00:00" },
         monday: { active: true, start: "09:00", end: "18:00" },
@@ -59,6 +62,7 @@ export const Store: React.FC = () => {
           email: storeResult.data.email,
           phone: storeResult.data.phone,
           slug: storeResult.data.slug,
+          image_url: storeResult.data.image_url || "",
           hours: form.getValues().hours,
         });
 
@@ -103,6 +107,7 @@ export const Store: React.FC = () => {
             email: storeResult.data.email,
             phone: storeResult.data.phone,
             slug: storeResult.data.slug,
+            image_url: storeResult.data.image_url || "",
             hours: hoursMap,
           });
         }
@@ -121,6 +126,7 @@ export const Store: React.FC = () => {
         email: data.email,
         phone: data.phone,
         slug: data.slug,
+        image_url: data.image_url || null,
       });
 
       // Update store hours
@@ -146,7 +152,7 @@ export const Store: React.FC = () => {
       }
 
       toast.addToast("Estabelecimento atualizado com sucesso!", "success");
-    } catch (error) {
+    } catch {
       toast.addToast("Erro ao atualizar estabelecimento", "error");
     } finally {
       setIsSaving(false);
@@ -176,6 +182,11 @@ export const Store: React.FC = () => {
           <strong className="font-semibold text-xs sm:text-sm text-zinc-600">
             Dados do estabelecimento
           </strong>
+
+          <StoreImageUpload
+            storeId={storeId}
+            currentImageUrl={form.watch("image_url")}
+          />
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-5 w-full">
             <div className="flex-1">

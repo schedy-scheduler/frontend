@@ -115,7 +115,7 @@ export const storeService = {
     try {
       const fileName = `${storeId}/${Date.now()}-${file.name}`;
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from("stores")
         .upload(fileName, file, {
           cacheControl: "3600",

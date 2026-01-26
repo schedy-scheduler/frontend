@@ -32,8 +32,8 @@ const CalendarHeader: React.FC<{ onNewSchedulingClick: () => void }> = ({
   }, [currentDate, view]);
 
   return (
-    <div className="flex flex-col gap-3 pb-2">
-      <div className="flex items-center justify-between gap-2">
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 pb-2">
+      <div className="flex items-center justify-between gap-2 lg:flex-1">
         <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
           <ChevronLeft
             className="cursor-pointer text-zinc-500 flex-shrink-0"
@@ -50,7 +50,7 @@ const CalendarHeader: React.FC<{ onNewSchedulingClick: () => void }> = ({
           />
         </div>
         <Button
-          className="ml-auto flex-shrink-0 text-xs sm:text-sm"
+          className="lg:hidden ml-auto lg:ml-2 flex-shrink-0 text-xs sm:text-sm"
           onClick={onNewSchedulingClick}
         >
           <Plus size={16} className="sm:size-5" />
@@ -58,7 +58,7 @@ const CalendarHeader: React.FC<{ onNewSchedulingClick: () => void }> = ({
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+      <div className="flex flex-wrap items-center gap-1 sm:gap-2 lg:flex-nowrap">
         <Button
           variant={view === "day" ? "default" : "outline"}
           onClick={() => setView("day")}
@@ -91,6 +91,14 @@ const CalendarHeader: React.FC<{ onNewSchedulingClick: () => void }> = ({
           className="text-xs"
         >
           Hoje
+        </Button>
+
+        <Button
+          className="xs:hidden lg:flex ml-auto lg:ml-2 flex-shrink-0 text-xs sm:text-sm"
+          onClick={onNewSchedulingClick}
+        >
+          <Plus size={16} className="sm:size-5" />
+          <span className="hidden sm:inline">Agendamento</span>
         </Button>
       </div>
     </div>

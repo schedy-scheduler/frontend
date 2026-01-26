@@ -1,4 +1,4 @@
-import { LogOut, Store, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -29,15 +29,17 @@ export const Menu: React.FC = () => {
   return (
     <Sidebar>
       <SidebarHeader className="flex-row items-center gap-2 p-2 sm:p-3">
-        <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-zinc-800 flex-shrink-0">
-          <Store size={18} color="white" />
-        </div>
+        <img
+          className="h-8 w-8 flex items-center justify-center rounded-lg object-cover border border-zinc-200"
+          src={user?.store?.image_url || ""}
+          alt="Store"
+        />
         <div className="flex flex-col min-w-0">
           <strong className="text-xs truncate">
             {user?.store?.name || "Meu Estabelecimento"}
           </strong>
           <span className="text-[10px] text-zinc-500 truncate">
-            Plano grátis
+            Teste grátis
           </span>
         </div>
       </SidebarHeader>

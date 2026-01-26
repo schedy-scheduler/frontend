@@ -14,6 +14,8 @@ export type TEmployee = {
   name: string;
   email: string;
   function: string;
+  commission_type?: string;
+  commission_value?: number;
 };
 
 export const Employees: React.FC = () => {
@@ -22,6 +24,9 @@ export const Employees: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [storeId, setStoreId] = useState<string>("");
   const [editingId, setEditingId] = useState<string>("");
+  const [editingEmployee, setEditingEmployee] = useState<
+    TEmployee | undefined
+  >();
 
   useEffect(() => {
     loadData();
@@ -56,11 +61,13 @@ export const Employees: React.FC = () => {
 
   const handleEdit = (employee: TEmployee) => {
     setEditingId(employee.id);
+    setEditingEmployee(employee);
     setEmployeeModalIsOpen(true);
   };
 
   const handleAddNew = () => {
     setEditingId("");
+    setEditingEmployee(undefined);
     setEmployeeModalIsOpen(true);
   };
 
@@ -92,6 +99,25 @@ export const Employees: React.FC = () => {
     {
       accessorKey: "function",
       header: "Função",
+    },
+    {
+      accessorKey: "commission_type",
+      header: "Comissionamento",
+      cell: ({ row }) => {
+        const type = row.getValue("commission_type") as string;
+        const value = row.original.commission_value;
+
+        if (type === "full") {
+          return <span className="text-sm">100% do serviço</span>;
+        }
+        if (type === "percentage") {
+          return <span className="text-sm">{value}%</span>;
+        }
+        if (type === "fixed") {
+          return <span className="text-sm">R$ {Number(value).toFixed(2)}</span>;
+        }
+        return <span className="text-sm">-</span>;
+      },
     },
     {
       id: "actions",
@@ -145,8 +171,13 @@ export const Employees: React.FC = () => {
 
       <UpsertEmployeeModal
         isOpen={employeeModalIsOpen}
-        onClose={() => setEmployeeModalIsOpen(false)}
+        onClose={() => {
+          setEmployeeModalIsOpen(false);
+          setEditingId("");
+          setEditingEmployee(undefined);
+        }}
         onConfirmClick={handleConfirm}
+        employee={editingEmployee}
       />
     </div>
   );
