@@ -219,6 +219,19 @@ export const Calendar: React.FC<{
             handleEventClick(event);
           }
         }}
+        renderEvent={(event) => (
+          <div className="flex flex-col bg-black rounded-sm p-1">
+            <span className="text-xs text-white font-semibold">
+              {event?.title}
+            </span>
+
+            {/* {view !== "month" && ( */}
+            <span className="text-[10px] text-zinc-300">
+              {event?.data?.services}
+            </span>
+            {/* )} */}
+          </div>
+        )}
         events={events}
         timeFormat="24-hour"
       />
