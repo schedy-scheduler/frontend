@@ -47,7 +47,12 @@ export const Employees: React.FC = () => {
     setIsLoading(true);
     const result = await employeesService.getAll(storeId);
     if (result.data) {
-      setEmployees(result.data as TEmployee[]);
+      setEmployees(
+        result.data.map((emp: any) => ({
+          ...emp,
+          commission_type: emp.commission_type || "percentage",
+        })) as TEmployee[],
+      );
     }
     setIsLoading(false);
   };
@@ -177,7 +182,15 @@ export const Employees: React.FC = () => {
           setEditingEmployee(undefined);
         }}
         onConfirmClick={handleConfirm}
-        employee={editingEmployee}
+        employee={
+          editingEmployee
+            ? {
+                ...editingEmployee,
+                commission_type:
+                  editingEmployee.commission_type || "percentage",
+              }
+            : undefined
+        }
       />
     </div>
   );

@@ -9,7 +9,6 @@ interface CommissionFieldsProps {
 
 export const CommissionFields: React.FC<CommissionFieldsProps> = ({
   commissionType = "percentage",
-  commissionValue = 0,
 }) => {
   const { watch } = useFormContext();
   const selectedType = watch("commission_type") || commissionType;

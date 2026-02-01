@@ -7,21 +7,23 @@ import { Input, TimePicker } from "./form";
 import { storeService } from "@/services/storeService";
 import { useToast } from "@/hooks/useToast";
 
-const onboardingSchema = yup.object({
-  slug: yup
-    .string()
-    .required("URL do estabelecimento é obrigatória")
-    .min(3, "URL deve ter no mínimo 3 caracteres")
-    .max(50, "URL deve ter no máximo 50 caracteres")
-    .matches(
-      /^[a-z0-9-]+$/,
-      "URL pode conter apenas letras minúsculas, números e hífen",
-    ),
-  email: yup.string().email("E-mail inválido"),
-  phone: yup.string(),
-  opening_hours: yup.string(),
-  closing_hours: yup.string(),
-});
+const onboardingSchema = yup
+  .object({
+    slug: yup
+      .string()
+      .required("URL do estabelecimento é obrigatória")
+      .min(3, "URL deve ter no mínimo 3 caracteres")
+      .max(50, "URL deve ter no máximo 50 caracteres")
+      .matches(
+        /^[a-z0-9-]+$/,
+        "URL pode conter apenas letras minúsculas, números e hífen",
+      ),
+    email: yup.string().email("E-mail inválido").notRequired(),
+    phone: yup.string().notRequired(),
+    opening_hours: yup.string().notRequired(),
+    closing_hours: yup.string().notRequired(),
+  })
+  .required();
 
 interface IOnboardingModalProps {
   isOpen: boolean;
@@ -31,7 +33,7 @@ interface IOnboardingModalProps {
 }
 
 interface OnboardingFormData {
-  slug?: string;
+  slug: string;
   email?: string;
   phone?: string;
   opening_hours?: string;
@@ -49,7 +51,7 @@ export const OnboardingModal: React.FC<IOnboardingModalProps> = ({
   const { addToast } = useToast();
 
   const form = useForm<OnboardingFormData>({
-    resolver: yupResolver(onboardingSchema),
+    resolver: yupResolver(onboardingSchema) as any,
     defaultValues: {
       slug: "",
       email: "",

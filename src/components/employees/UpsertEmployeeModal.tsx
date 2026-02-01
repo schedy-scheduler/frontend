@@ -5,31 +5,37 @@ import { CommissionFields } from "./CommissionFields";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-const schema = yup.object({
-  name: yup.string().required("Nome é obrigatório"),
-  email: yup.string().required("E-mail é obrigatório").email("E-mail inválido"),
-  function: yup.string().required("Função é obrigatório"),
-  commission_type: yup
-    .string()
-    .required("Tipo de comissionamento é obrigatório"),
-  commission_value: yup
-    .number()
-    .typeError("Valor é obrigatório")
-    .when("commission_type", {
-      is: "full",
-      then: (schema) => schema.notRequired(),
-      otherwise: (schema) =>
-        schema
-          .required("Valor é obrigatório")
-          .min(0, "Valor não pode ser negativo"),
-    }),
-});
+const schema = yup
+  .object({
+    name: yup.string().required("Nome é obrigatório"),
+    email: yup
+      .string()
+      .required("E-mail é obrigatório")
+      .email("E-mail inválido"),
+    function: yup.string().required("Função é obrigatório"),
+    commission_type: yup
+      .string()
+      .required("Tipo de comissionamento é obrigatório"),
+    commission_value: yup
+      .number()
+      .typeError("Valor é obrigatório")
+      .when("commission_type", {
+        is: "full",
+        then: (schema) => schema.notRequired(),
+        otherwise: (schema) =>
+          schema
+            .required("Valor é obrigatório")
+            .min(0, "Valor não pode ser negativo"),
+      })
+      .notRequired(),
+  })
+  .required();
 
 interface IFormData {
   name: string;
   email: string;
   function: string;
-  commission_type?: string;
+  commission_type: string;
   commission_value?: number;
 }
 
@@ -54,7 +60,7 @@ export const UpsertEmployeeModal: React.FC<IUpsertEmployeeModalProps> = ({
       commission_type: employee?.commission_type || "percentage",
       commission_value: employee?.commission_value || 0,
     },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema) as any,
   });
 
   const handleSubmit = form.handleSubmit((data) => {

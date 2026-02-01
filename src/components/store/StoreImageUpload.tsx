@@ -73,7 +73,7 @@ export const StoreImageUpload: React.FC<StoreImageUploadProps> = ({
       }
 
       // Upload new image
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("stores")
         .upload(fileName, file, {
           cacheControl: "3600",

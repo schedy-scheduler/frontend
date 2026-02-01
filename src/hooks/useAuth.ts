@@ -59,7 +59,12 @@ export const useAuth = () => {
       const authUserWithStore: AuthUser = {
         ...authUser,
         name: authUser.user_metadata?.name || authUser.email?.split("@")[0],
-        store: storeResult.data || undefined,
+        store: storeResult.data
+          ? {
+              ...storeResult.data,
+              image_url: storeResult.data.image_url || undefined,
+            }
+          : undefined,
       };
 
       setUser(authUserWithStore);

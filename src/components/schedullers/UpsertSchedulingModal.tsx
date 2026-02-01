@@ -20,14 +20,13 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 
 interface IFormData {
-  professional: number | string;
+  professional: string;
   date: string;
   time: string;
-  customer: number | string;
+  customer: string;
   services: string[];
   total?: number;
   duration?: string;
-  completed?: boolean;
 }
 
 interface Service extends SelectOption {
@@ -51,21 +50,20 @@ interface SelectOption {
   label?: string;
 }
 
-const schedulingValidationSchema = yup.object({
-  customer: yup.string().required("Cliente é obrigatório"),
-  professional: yup.string().required("Profissional é obrigatório"),
-  date: yup.string().required("Data é obrigatória"),
-  time: yup.string().required("Hora é obrigatória"),
-  services: yup
-    .array(yup.string())
-    .min(1, "Selecione pelo menos um serviço")
-    .required("Selecione pelo menos um serviço"),
-  total: yup.number().optional(),
-  duration: yup.string().optional(),
-  completed: yup.boolean().optional(),
-});
-
-type SchedulingFormData = yup.InferType<typeof schedulingValidationSchema>;
+const schedulingValidationSchema = yup
+  .object({
+    customer: yup.string().required("Cliente é obrigatório"),
+    professional: yup.string().required("Profissional é obrigatório"),
+    date: yup.string().required("Data é obrigatória"),
+    time: yup.string().required("Hora é obrigatória"),
+    services: yup
+      .array(yup.string())
+      .min(1, "Selecione pelo menos um serviço")
+      .required("Selecione pelo menos um serviço"),
+    total: yup.number().optional().notRequired(),
+    duration: yup.string().optional().notRequired(),
+  })
+  .required();
 
 const getTodayDate = () => {
   const today = new Date();
@@ -133,7 +131,7 @@ export const UpsertSchedulingModal: React.FC<IUpsertSchedulingModalProps> = ({
   const { addToast } = useToast();
 
   const form = useForm<IFormData>({
-    resolver: yupResolver(schedulingValidationSchema),
+    resolver: yupResolver(schedulingValidationSchema) as any,
     defaultValues: {
       professional: "",
       customer: "",
@@ -279,7 +277,6 @@ export const UpsertSchedulingModal: React.FC<IUpsertSchedulingModalProps> = ({
         services: serviceIds.map(String),
         total: 0,
         duration: "00:00",
-        completed: isScheduleCompleted,
       });
 
       if (serviceIds.length > 0) {
@@ -300,7 +297,7 @@ export const UpsertSchedulingModal: React.FC<IUpsertSchedulingModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSchedule, isOpen, servicesWithData.length]);
 
-  const handleSubmit = form.handleSubmit((data: IFormData) => {
+  const handleSubmit = form.handleSubmit((data) => {
     console.log("Form data before submit:", data);
     onConfirmClick(data);
     form.reset();
@@ -342,9 +339,7 @@ export const UpsertSchedulingModal: React.FC<IUpsertSchedulingModalProps> = ({
     if (!selectedSchedule?.id || !canCompleteSchedule()) return;
 
     setIsCompleting(true);
-    const { error } = await schedulesService.update(selectedSchedule.id, {
-      completed: true,
-    });
+    const { error } = await schedulesService.update(selectedSchedule.id, {});
 
     if (error) {
       console.error("Erro ao marcar como concluído:", error);

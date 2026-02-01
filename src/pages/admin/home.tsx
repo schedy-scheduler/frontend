@@ -39,7 +39,7 @@ export const Home = () => {
       setStoreId(storeData.id);
 
       // Verificar se precisa fazer o onboarding
-      if (!storeData.onboarding_completed) {
+      if (!(storeData as any)?.onboarding_completed) {
         setShowOnboarding(true);
       }
     } catch (error) {
