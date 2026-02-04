@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { Modal } from "../Modal";
-import { Input } from "../form";
+import { Input, InputMask } from "../form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -52,7 +52,12 @@ export const UpsertServiceModal: React.FC<IUpsertServiceModalProps> = ({
       >
         <div className="flex flex-col gap-3">
           <Input name="name" label="Nome" placeholder="Nome do serviço" />
-          <Input name="value" label="Valor" placeholder="Valor do serviço" />
+          <Input
+            name="value"
+            label="Valor"
+            placeholder="Valor do serviço"
+            mask={InputMask.CURRENCY}
+          />
           <Input
             name="duration"
             label="Duração"

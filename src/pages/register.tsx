@@ -14,6 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { authService } from "@/services/authService";
 import { useState } from "react";
 import { useToast } from "@/hooks/useToast";
+import { translateError } from "@/lib/errorTranslation";
 
 const formSchema = yup.object({
   name: yup.string().required("Nome é obrigatório."),
@@ -56,7 +57,7 @@ export const Register = () => {
     });
 
     if (result.error) {
-      toast.addToast(result.error, "error");
+      toast.addToast(translateError(result.error), "error");
       setIsLoading(false);
       return;
     }

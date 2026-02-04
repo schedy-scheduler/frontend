@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from "react-hook-form";
 import { Modal } from "../Modal";
-import { Input } from "../form";
+import { Input, InputMask } from "../form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -57,6 +57,7 @@ export const UpsertCustomerModal: React.FC<IUpsertCustomerModalProps> = ({
             name="phone"
             label="Telefone"
             placeholder="Telefone do cliente"
+            mask={InputMask.PHONE}
           />
         </div>
       </Modal>

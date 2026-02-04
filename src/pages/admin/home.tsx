@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { schedulesService } from "@/services/schedulesService";
 import { storeService } from "@/services/storeService";
+import { translateError } from "@/lib/errorTranslation";
 
 export const Home = () => {
   const { user } = useAuth();
@@ -84,7 +85,7 @@ export const Home = () => {
       const { error } = await schedulesService.create(scheduleData as any);
 
       if (error) {
-        toast.addToast(error, "error");
+        toast.addToast(translateError(error), "error");
         return;
       }
 

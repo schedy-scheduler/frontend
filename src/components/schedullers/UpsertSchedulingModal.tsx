@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
+import { translateError } from "@/lib/errorTranslation";
 
 interface IFormData {
   professional: string;
@@ -343,7 +344,10 @@ export const UpsertSchedulingModal: React.FC<IUpsertSchedulingModalProps> = ({
 
     if (error) {
       console.error("Erro ao marcar como concluído:", error);
-      addToast(`Erro ao marcar agendamento como concluído: ${error}`, "error");
+      addToast(
+        `Erro ao marcar agendamento como concluído: ${translateError(error)}`,
+        "error",
+      );
       setIsCompleting(false);
     } else {
       addToast("Agendamento marcado como concluído", "success");

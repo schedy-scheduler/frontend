@@ -1,4 +1,4 @@
-import { Input, InputWithPrefix } from "@/components/form";
+import { Input, InputMask, InputWithPrefix } from "@/components/form";
 import { PageHeader } from "@/components/PageHeader";
 import { StoreHourItem } from "@/components/store/StoreHourItem";
 import { StoreImageUpload } from "@/components/store/StoreImageUpload";
@@ -211,6 +211,7 @@ export const Store: React.FC = () => {
                 name="phone"
                 label="Telefone"
                 placeholder="Telefone do estabelecimento"
+                mask={InputMask.PHONE}
               />
             </div>
             <div className="flex-1">

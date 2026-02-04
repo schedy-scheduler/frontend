@@ -1,11 +1,13 @@
 import { FormProvider, useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Modal } from "./Modal";
-import { Input, TimePicker } from "./form";
+import { Input, InputMask, TimePicker } from "./form";
 import { storeService } from "@/services/storeService";
+import { storeHoursService } from "@/services/storeHoursService";
 import { useToast } from "@/hooks/useToast";
+import { useAuth } from "@/hooks/useAuth";
 
 const onboardingSchema = yup
   .object({
@@ -18,10 +20,10 @@ const onboardingSchema = yup
         /^[a-z0-9-]+$/,
         "URL pode conter apenas letras minúsculas, números e hífen",
       ),
-    email: yup.string().email("E-mail inválido").notRequired(),
-    phone: yup.string().notRequired(),
-    opening_hours: yup.string().notRequired(),
-    closing_hours: yup.string().notRequired(),
+    email: yup.string().email("E-mail inválido").required(),
+    phone: yup.string().required(),
+    opening_hours: yup.string().required(),
+    closing_hours: yup.string().required(),
   })
   .required();
 
@@ -34,10 +36,10 @@ interface IOnboardingModalProps {
 
 interface OnboardingFormData {
   slug: string;
-  email?: string;
-  phone?: string;
-  opening_hours?: string;
-  closing_hours?: string;
+  email: string;
+  phone: string;
+  opening_hours: string;
+  closing_hours: string;
 }
 
 export const OnboardingModal: React.FC<IOnboardingModalProps> = ({
@@ -49,11 +51,12 @@ export const OnboardingModal: React.FC<IOnboardingModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [slugError, setSlugError] = useState<string>("");
   const { addToast } = useToast();
+  const { user } = useAuth();
 
   const form = useForm<OnboardingFormData>({
-    resolver: yupResolver(onboardingSchema) as any,
+    resolver: yupResolver(onboardingSchema),
     defaultValues: {
-      slug: "",
+      slug: user?.store?.slug ?? "",
       email: "",
       phone: "",
       opening_hours: "09:00",
@@ -94,8 +97,6 @@ export const OnboardingModal: React.FC<IOnboardingModalProps> = ({
         slug: data.slug || "",
         email: data.email || "",
         phone: data.phone || "",
-        opening_hours: data.opening_hours || "09:00",
-        closing_hours: data.closing_hours || "18:00",
         onboarding_completed: true,
       };
 
@@ -107,14 +108,56 @@ export const OnboardingModal: React.FC<IOnboardingModalProps> = ({
         return;
       }
 
+      // Criar horários de funcionamento para todos os dias da semana
+      const openingTime = data.opening_hours || "09:00";
+      const closingTime = data.closing_hours || "18:00";
+
+      // Dias da semana: 0 = Domingo, 1 = Segunda, ..., 6 = Sábado
+      for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+        const storeHourData = {
+          store_id: storeId,
+          day_of_week: dayOfWeek,
+          start_time: openingTime,
+          end_time: closingTime,
+          is_active: true,
+        };
+
+        // Verifica se já existe horário para este dia
+        const existingHour = await storeHoursService.getByDay(
+          storeId,
+          dayOfWeek,
+        );
+
+        if (existingHour.error || !existingHour.data) {
+          // Criar novo horário
+          await storeHoursService.create(storeHourData);
+        } else {
+          // Atualizar horário existente
+          await storeHoursService.update(existingHour.data.id, {
+            start_time: openingTime,
+            end_time: closingTime,
+            is_active: true,
+          });
+        }
+      }
+
       addToast("Dados do estabelecimento salvos com sucesso!", "success");
       setIsSaving(false);
       onComplete();
     } catch (error) {
+      console.error(error);
       addToast("Erro ao salvar dados", "error");
       setIsSaving(false);
     }
   });
+
+  useEffect(() => {
+    if (user) {
+      form.setValue("email", user.email || "");
+      form.setValue("phone", user.phone || "");
+      form.setValue("slug", user.store?.slug || "");
+    }
+  }, [user, form]);
 
   return (
     <FormProvider {...form}>
@@ -163,6 +206,7 @@ export const OnboardingModal: React.FC<IOnboardingModalProps> = ({
             name="phone"
             label="Telefone"
             placeholder="Digite o telefone"
+            mask={InputMask.PHONE}
           />
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
